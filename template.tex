@@ -1,0 +1,72 @@
+%%%%%%%%%%%% 文章格式 %%%%%%%%%%%%%%%
+\documentclass{article}
+
+\usepackage{lipsum}   % 生成随机的内容
+\usepackage{ctex}     % 中文输入
+\usepackage{metalogo} % 跟LaTex有关的一些logo，如elatex
+\usepackage{amsmath,amssymb,amsfonts} % 跟数学公式相关的包
+\usepackage{algorithm}            % 代码块
+\usepackage[noend]{algpseudocode} % 伪代码
+\usepackage{graphicx}          % 图片
+\usepackage[backref]{hyperref} % 超链接可以点
+\usepackage{multicol}          % 多列文档
+\usepackage{enumitem} % 调整上下左右缩进间距，标签样式
+\setenumerate[1]{itemsep=0pt,partopsep=0pt,parsep=\parskip,topsep=5pt}
+\setitemize[1]{itemsep=0pt,partopsep=0pt,parsep=\parskip,topsep=5pt}
+\setdescription{itemsep=0pt,partopsep=0pt,parsep=\parskip,topsep=5pt}
+
+
+%%%%%%%%%%%% 文章内容 %%%%%%%%%%%%%%%
+\title{信息论学习笔记：数学基础}
+\author{付杰}
+
+
+\begin{document}
+\maketitle
+\section{Chapter 1}
+\subsection{自信息(Chapter 1.1)}
+
+\bibliography{ref}        % 参看文献名
+\bibliographystyle{unsrt} % 参考文献格式
+\end{document}
+
+
+
+% 插入图片
+%\begin{figure}[htbp]
+	%\centerline{\includegraphics[width=0.5\textwidth]{images/ad1.png}}
+	%\caption{How to judge a point is positive or negative}
+	%\label{ml3}
+%\end{figure}
+
+%% 插入图片当做表格
+%\begin{table}[htb]
+	%\caption{Description of the data}
+	%\label{tab:my table}
+	%\includegraphics[width=0.5\textwidth]{images/him1.png}
+%\end{table}
+
+
+%% 插入公式块
+%\begin{algorithm}[t]
+	%\caption{algorithm caption} %算法的名字
+	%\hspace*{0.02in} {\bf Input:} %算法的输入， \hspace*{0.02in}用来控制位置，同时利用 \\ 进行换行
+	%input parameters A, B, C\\
+	%\hspace*{0.02in} {\bf Output:} %算法的结果输出
+	%output result
+	%\begin{algorithmic}[1]
+		%\State some description % \State 后写一般语句
+		%\For{condition} % For 语句，需要和EndFor对应
+		%\State ...
+		%\If{condition} % If 语句，需要和EndIf对应
+		%\State ...
+		%\Else
+		%\State ...
+		%\EndIf
+		%\EndFor
+		%\While{condition} % While语句，需要和EndWhile对应
+		%\State ...
+		%\EndWhile
+		%\State \Return result
+	%\end{algorithmic}
+%\end{algorithm}
