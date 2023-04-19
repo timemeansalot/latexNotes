@@ -1,0 +1,436 @@
+% !TEX program = xelatex
+
+% ==== Part1: 引入latex需要的package，支持不同的需求，如中文、图片 ====
+% \documentclass{article}
+\documentclass{book}
+\usepackage[UTF8]{ctex} % 中文latex支持
+\usepackage{graphicx} % 引入图片时需要的包
+\usepackage{float}    % 插入图片的时候支持`H`这个位置选项
+\usepackage{subcaption} % 插入多张图片到一个figure域中
+\usepackage{hyperref}   % 插入超链接、TOC支持链接
+\usepackage{amsmath,bm} % 一些数序符号、字符
+\usepackage{listings}   % 插入代码块
+% ==== 对引入的package配置 ====
+\graphicspath{{images/}} % 配置graphicx这个包：指定图片存储的地方
+\hypersetup{ % 设置超链接和url的显示样式
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+\urlstyle{same}
+
+% ==== Part2: latex文档格式配置 ====
+\let\cleardoublepage\clearpage % 删除chapter之间不想要的空白页面
+\newif\ifchinese % 定义一个条件变量: ifchinese, 作为控制条件编译的开关
+\chinesetrue % 条件编译的控制开关，注释掉此部分内容，则对应部分不会被现实
+\newif\ifchinese % 定义一个条件变量: ifchinese, 作为控制条件编译的开关
+\chinesetrue % 条件编译的控制开关，注释掉此部分内容，则对应部分不会被现实
+
+% ==== Part3: latex文档标题部分 ====
+\title{线性代数学习笔记}
+\author{付杰\thanks{感谢GILBERT STRANG老师的书籍和教学}}
+\date{2023年4月15日 至 \today}
+
+
+% ==== Part4: latex文档正文部分 ====
+\begin{document}
+\maketitle
+\newpage
+
+% \begin{abstract} % 摘要
+\chapter*{前言} % 摘要
+线性代数是做科研时需要掌握的最重要的数学知识之一。在我认为，在“计算机体系结构”，“数字集成电路设计”的科研过程当中，线性代数出现的频率比“微积分”和“概率论”出现的频率还高。
+
+例如在计算机科学中，很多高性能计算相关的课题因为需要并行计算，因此是跟矩阵计算有关的，很多的算法跟数据结构都可以转化成矩阵的形式，例如图相关问题;在数字通信领域，例如在设计5G基带处理器的时候，处理器内部有很多的加速器用以加速编码、调制、解交织等过程，这些都是计算密集型计算，就会涉及到很多的矩阵乘法、举证求逆的操作；在“数字信号处理“和”深度学习“的学科中，也充斥着很多矩阵计算和优化(optimization)的问题。
+因此可以说线性代数在“计算机科学”、“电子科学”和“通信工程”中，扮演者非常非常重要的角色，如果没有基础的线性代数知识，在硕士阶段的科研过程中就会感到很局促、在博士科研过程中就根本无法开展工作。
+
+本笔记主要用于回忆考研过后就遗忘的“线性代数”相关的知识，相当于是重新学习一遍的过程；另外在重学现代的过程中，我也会结合自己现在研究生阶段时遇到的问题、新的学习方法，去以\textbf{一种新的高度和视角}去学习线性代数，尽力去让自己避免“死记硬背”，而是从“理解、实用”的角度去掌握线性代数。
+
+  参考的书籍主要是GILBERT STRANG老师的著作如\href{https://math.mit.edu/~gs/linearalgebra/ila5/indexila5.html}{《Introduction to Linear Algebra, fifth edition》}、《Linear Algebra and Its Applications, fifth edition》。第一章节主要记录线性代数的基础知识，第二章节会结合计算机科学、电子科学和通信技术中遇到的线性代数应用，展示线性代数是如何在科研中发挥作用的。
+  \par\textbf{关键字：} 线性代数, 矩阵乘法，线性代数应用
+
+\tableofcontents % 插入目录
+\chapter{线性代数基础知识} % (fold)
+\label{cha: chapter1}
+
+\section{向量}%
+在\textbf{向量}这一节主要介绍如下3部分向量的相关基础知识：
+\begin{enumerate}
+  \item 线性组合(linear combination)
+  \item 向量点积(dot product)
+  \item 矩阵和线性方程组$A\boldsymbol{x}=\boldsymbol{b}$
+\end{enumerate}
+\subsection{线性组合}
+  \label{sec:vectorIntro}
+  向量的\textit{线性组合}两个内容：\textit{向量乘以常数，向量加上向量}
+
+  \textbf{公式1:}
+\begin{equation}c \boldsymbol{v}+d \boldsymbol{w}=c\left[\begin{array}{l}1 \\ 1\end{array}\right]+d\left[\begin{array}{l}2 \\ 3\end{array}\right]=\left[\begin{array}{l}c+2 d \\ c+3 d\end{array}\right]\label{eq: vec1}\end{equation}
+
+  \begin{itemize}
+    \item c和d可以取任意值
+    \item   
+      \begin{equation*}
+              c\left[\begin{array}{c}
+                1\\1
+              \end{array}\right],
+              d\left[
+                \begin{array}{c}
+                2\\3 
+                \end{array}
+                \right]
+      \end{equation*}
+      分别表示在二维平面上沿着$(x,y)=(1,1)$的任意长度的直线、沿着$(x,y)=(2,3)$的任意长度的直线
+    \item 由于这两条直线\textbf{不重合}，因此公式\ref{eq: vec1}可以表示二维平面上所有的点, 即其可以\textbf{张成(span)整个二维平面}。
+  \end{itemize}
+
+
+\textbf{公式2:}
+\begin{equation}
+  c\left[\begin{array}{c}
+  1\\1\\1
+\end{array}\right]+
+  d\left[\begin{array}{c}
+    2\\3\\4
+  \end{array}\right]
+  \label{eq: vec2}
+\end{equation}
+
+  公式\ref{eq: vec2}表示\textit{三维空间里的一个平面}，因为：
+  \begin{itemize}
+    \item 每个向量包含3个元素，表示三维空间里的一条线。一个向量如果有n个元素，那么它就是n维空间的向量。
+    \item 公式\ref{eq: vec2}的线性组合表示\textit{三维空间里的两条不重合的直线的组合，其可以张成(span)三维空间里的一个平面}
+  \end{itemize}
+
+\textbf{公式3:}
+\begin{equation}
+  c\left[\begin{array}{c}
+  1\\1\\1
+\end{array}\right]+
+  d\left[\begin{array}{c}
+    2\\3\\4
+  \end{array}\right]=
+  \left[
+    \begin{array}{c}
+      1\\0\\0
+    \end{array}
+    \right]=\boldsymbol{b}
+  \label{eq: vec3}
+\end{equation}
+
+公式\ref{eq: vec3}尝试找到可能的c,d的组合使得等式成立，但是该等式无解。
+因为$\boldsymbol{b}$不在公式\ref{eq: vec2}所张成的平面上。
+
+
+PS: 为了节约文章的空间，后续文档中，列向量$\boldsymbol{v}$采用如下写法
+\begin{equation*}
+  \boldsymbol{v}=\left[
+      \begin{array}{c}
+        a\\b\\c
+      \end{array}
+      \right]=\left(a, b, c\right)
+\end{equation*}
+请勿因为$\boldsymbol{v}=\left(a, b, c\right)$而把$\boldsymbol{v}$认为是行向量，$\boldsymbol{v}=\left[a, b, c\right]$才是行向量的表示形式。
+
+\subsection{长度 \& 点积(dot product)}
+\textbf{向量相乘}
+\begin{equation}
+  \boldsymbol{v}=(a, b, c), \boldsymbol{u}=(x, y, z), \boldsymbol{v}\cdot \boldsymbol{u}=ax+by+cz 
+  \label{eq: dotProduct1}
+\end{equation}
+
+\textbf{向量之间的角度}
+\begin{equation}
+  \boldsymbol{v}=(a, b, c), \boldsymbol{u}=(x, y, z), \cos{\theta}=\frac{v\cdot u}{\lVert u \rVert \cdot \lVert u \rVert }
+  \label{eq: dotProduct2}
+\end{equation}
+\begin{itemize}
+  \item 向量平行(parallel)的时候，点积的值最大
+  \item 向量垂直(perpendicular)的时候，点积的值最小且为0
+\end{itemize}
+
+\textbf{柯西不等式\&三角不等式}
+\begin{equation}
+  \begin{aligned}
+    &\text{柯西不等式: }\vert v \cdot u \vert \leq  \lVert v \rVert \lVert u \rVert \\
+    &\text{三角不等式: } \vert v+u \vert \leq \lVert v \rVert + \lVert u \rVert \\
+  \end{aligned}
+  \label{eq: unequal}
+\end{equation}
+
+\section{矩阵Matrix}
+将公式\ref{eq: vec3}中的$\boldsymbol{c, d}$换成$\boldsymbol{x_1, x_2}$，可以得到
+
+\begin{equation}
+   x_1\left[
+     \begin{array}{c}
+      1\\1\\1
+     \end{array}\right] 
+   +x_2\left[
+     \begin{array}{c}
+      2\\3\\4
+     \end{array}\right]=
+   \left[\begin{array}{c c}
+     1 & 2\\
+     1 & 3\\
+     1 & 4\\
+   \end{array}\right]
+   \left[ 
+   \begin{array}{c}
+     x_1\\
+     x_2
+   \end{array}\right]=\boldsymbol{Ax}
+  \label{eq: matrix1}
+\end{equation}
+
+\subsection{矩阵乘向量的两种理解}
+
+在式\ref{eq: matrix1}的右边添加目标列向量$\boldsymbol{b}$，尝试找到可能的x，满足公式\ref{eq: matrix2}，则引出了矩阵求解的问题。
+\begin{equation}
+  \boldsymbol{Ax}=\boldsymbol{b}
+  \label{eq: matrix2}
+\end{equation}
+
+矩阵求解的问题主要有两个：\textit{是否有解}? 和 \textit{解是什么}? 
+对矩阵乘法$\boldsymbol{Ax}$的理解如下：
+\begin{enumerate}
+  \item \textbf{Column Picture(从列向量线性组合的角度)}: 矩阵A中的每一列都是一个\textit{列向量, $\boldsymbol{Ax}$}表示所有A中列向量的\textit{线性组合} 
+
+    $\boldsymbol{Ax}=0$表示所有列向量的线性组合等于0。当$\boldsymbol{x}$中元素全部为0的时候，一定会成立；当$\boldsymbol{x}$中元素不全部为0的时候，$\boldsymbol{A}$的列向量必须相关才可以成立。
+        \begin{equation}
+          \boldsymbol{Ax}=\left[\boldsymbol{a_1, a_2}, \cdots \boldsymbol{a_n}\right]\cdot\left[
+            \begin{array}{c}
+              x_1\\x_2 \vdots \\x_n
+            \end{array}\right]=x_1a_1+x_2a_2+\cdots+x_na_x
+          \label{eq: columnPic}
+        \end{equation}
+      \item \textbf{Row Picture(从几何相交的角度)}:  矩阵A中每一行都是一个行向量, $\boldsymbol{Ax}$如果有m行，则表示有m个等式，每一个等式都是一个平面，表明这m个平面相交于$\boldsymbol{x}$。
+        $\boldsymbol{Ax}=\boldsymbol{0}$表示这m个平面相交于原点(origin)。
+        \begin{equation}
+          \boldsymbol{Ax}=\left[
+            \begin{array}{c}
+              row_1 \\ 
+              row_2 \\ 
+              \vdots\\ 
+              row_n
+            \end{array}
+            \right]\cdot \boldsymbol{x}=
+          \left[
+            \begin{array}{c}
+              row_1\cdot\boldsymbol{x}\\ 
+              row_2\cdot\boldsymbol{x} \\ 
+              \vdots\\ 
+              row_n\cdot\boldsymbol{x}
+            \end{array}
+            \right]
+          \label{eq: rowPic}
+        \end{equation}
+\end{enumerate}
+
+
+\subsection{矩阵乘法有解条件}
+
+\begin{enumerate}
+  \item \textbf{几何理解：}b在A所有列向量张成的空间里
+\end{enumerate}
+
+\subsection{矩阵乘法有唯一解条件}
+\begin{enumerate}
+  \item 矩阵A\textbf{可逆}: $x=A^{-1}b$ 
+  \item 矩阵A所有的列向量\textbf{独立}
+  \item \textbf{几何理解：}矩阵A中不存在某个列向量$col_k$，存在于其余列向量张成的空间里
+\end{enumerate}
+
+\section{矩阵乘矩阵}
+矩阵乘矩阵$AB=C$有两种理解: 
+\begin{enumerate}
+  \item 矩阵A的行乘以矩阵B的列，得到目标矩阵的一个元素$C_ij$；逐一计算得到所有的C的元素
+    \begin{equation*}
+      \begin{aligned}
+        AB&=\left[\begin{array}{c c}
+          1 & 1\\ 
+          2 & 2 
+        \end{array}\right]\left[
+          \begin{array}{c c}
+          1 & 2\\ 
+          3 & 4 
+        \end{array}
+          \right]\\
+        &=\left[
+          \begin{array}{c c}
+          4 & x\\ 
+          x & x 
+        \end{array}
+          \right]
+        =\left[
+          \begin{array}{c c}
+          4 & 6\\ 
+          x & x 
+        \end{array}
+          \right]\\
+        &=\left[
+          \begin{array}{c c}
+          4 & 6\\ 
+          8 & x 
+        \end{array}
+          \right]
+        =\left[
+          \begin{array}{c c}
+          4 & 6\\ 
+          8 & 12 
+        \end{array}
+          \right]
+      \end{aligned}
+    \end{equation*}
+  \item 矩阵A的列乘以矩阵B的行，得到一个矩阵；一共可以得到多个矩阵，然后这些矩阵再相加
+    \begin{equation*}
+      \begin{aligned}
+        AB&=\left[\begin{array}{c c}
+          1 & 1\\ 
+          2 & 2 
+        \end{array}\right]\left[
+          \begin{array}{c c}
+          1 & 2\\ 
+          3 & 4 
+        \end{array}
+          \right]\\
+        &=\left[
+          \begin{array}{c c}
+            1 & 2\\ 
+            2 & 4
+          \end{array}
+          \right]+
+        \left[
+          \begin{array}{c c}
+            3 & 4\\ 
+            6 & 8
+          \end{array}
+          \right]\\
+        &=\left[
+          \begin{array}{c c}
+            4 & 6\\ 
+            8 & 12 
+          \end{array}
+          \right]
+      \end{aligned}
+    \end{equation*}
+\end{enumerate}
+
+
+在解矩阵方程$\boldsymbol{Ax}=\boldsymbol{b}$的时候，我们需要做\textbf{row elimination}对矩阵A进行化简得到上三角矩阵。
+化简的这个过程可以用矩阵乘法来表示。
+
+\textbf{消除矩阵(elimination Matrix) $E_{ij}$}
+\begin{equation*}
+  \begin{aligned}
+    \boldsymbol{Ax}&=\boldsymbol{b} \rightarrow \boldsymbol{E}Ax=\boldsymbol{E}b\\
+    \text{if } \boldsymbol{E}&=
+    \left[
+      \begin{array}{c c c}
+        1 & 0 & 0 \\ 
+        -l & 1 & 0 \\ 
+        0 & 0 & 1
+      \end{array}
+    \right]\text{then :}\\
+  Eb&=\left[\begin{array}{c}
+    b_1\\ b_2-b_1 \\ b_3 
+  \end{array}\right]\\ 
+    EAx&=\left[
+      \begin{array}{c}
+      row_1\\ row_2-row_1 \\row_3
+      \end{array}\right]x
+  \end{aligned}
+  \label{eq: matrix3}
+\end{equation*}
+
+\textbf{行交换矩阵(row exchange Matrix) $P_{ij}$}
+\begin{equation*}
+  \begin{aligned}
+    \boldsymbol{Ax}&=\boldsymbol{b} \rightarrow \boldsymbol{P}Ax=\boldsymbol{P}b\\
+    \text{if } \boldsymbol{P}&=
+    \left[
+      \begin{array}{c c c}
+        1 & 0 & 0 \\ 
+        0 & 0 & 1 \\ 
+        0 & 1 & 0
+      \end{array}
+    \right]\text{then :}\\
+  Pb&=\left[\begin{array}{c}
+    b_1\\ b_3 \\ b_2 
+  \end{array}\right]\\ 
+    PAx&=\left[
+      \begin{array}{c}
+      row_1\\ row_3\\row_2
+      \end{array}\right]x
+  \end{aligned}
+  \label{eq: matrix4}
+\end{equation*}
+
+\begin{enumerate}
+  \item $\boldsymbol{EA}$可以看成E作用于A的每一个列向量，其效果跟$\boldsymbol{Eb}$是一样的。
+  \item 矩阵乘在A的左边($\boldsymbol{EA}$)，则会对A的每一个行向量起作用;\\
+    矩阵乘在A的右边($\boldsymbol{AE}$)，则会对A的每一个列向量起作用
+\end{enumerate}
+
+\section{逆矩阵$A^{-1}$}
+\begin{enumerate}
+  \item 定义：
+    \begin{equation}
+      AA^{-1}=A^{-1}A=I
+      \label{eq: inverse}
+    \end{equation}
+  \item 判断条件：
+    \begin{enumerate}
+      \item 快速的判断方法: 对A进行行化简，最后A有n个povit，否则会违反Gauss-Jordan elimination\\ 
+        对角主导矩阵(diagonally dominant matrix): 矩阵对角线元素，比该行所有元素之和还大
+      \item 计算A的行列式, $\vert A\vert\neq 0$, 否则会违反公式\ref{eq: inverse}
+      \item 解矩阵方程$Ax=0, x=0$是唯一解, 否则$x=A^{-1}0\neq 0$自相矛盾
+      \item 对角矩阵，对角线元素不存在0, 否则会违反判断条件(b)
+    \end{enumerate}
+    不可逆矩阵称为(singular matrix)
+  \item 应用
+    \begin{enumerate}
+      \item $(AB)^{-1}=B^{-1}A^{-1}$ 
+      \item $Ax=b\rightarrow x=A^{-1}b$
+      \item A沿着对角线对称则$A^{-1}$也沿着对角线对称;\\ 
+            A是稀疏矩阵，$A^{-1}$很有可能是稠密矩阵;\\ 
+            A是上三角矩阵，$A^{-1}$也是上三角矩阵
+    \end{enumerate}
+  \item 求逆矩阵$A^{-1}$的方法:
+    \begin{enumerate}
+      \item Gauss-Jordan elimination: $\left[A \; I\right]\rightarrow [I \: A^{-1}]$
+    \end{enumerate}
+\end{enumerate}
+\section{LU分解}
+\begin{equation}
+  \begin{aligned}
+    A&=LU\\ 
+    A&=LDU
+  \end{aligned}
+  \label{eq: LU1}
+\end{equation}
+在做Gauss-Jordan分解得到上三角矩阵U的时候，自然就完成了对矩阵A的LU分解。
+其中U是上三角矩阵，L是对A做的行变换的逆矩阵\\ 
+进一步将U转化成对角线为1的矩阵: $U=DU$, eq:
+\begin{equation*}
+  \begin{aligned}
+    A&= 0
+  \end{aligned}
+  \label{eq: LU2}
+\end{equation*}
+TODO: 举例子说明A=LU过程
+
+\begin{enumerate}
+  \item $A=LU$的计算复杂度: $O(n^3)$
+  \item LU分解的作用：更方便地求解x, $Ax=b \rightarrow Lc= b, Ux=c$
+\end{enumerate}
+
+% \newpage 
+% \bibliography{ref} % 参考文献源，存储所有的参考文献
+% \bibliographystyle{IEEEtran} % latex饮用参考文献时的格式
+
+\end{document}
+
