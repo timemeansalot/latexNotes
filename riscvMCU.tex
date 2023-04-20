@@ -1,0 +1,81 @@
+% !TEX program = xelatex
+
+% ==== Part1: 引入latex需要的package，支持不同的需求，如中文、图片 ====
+\documentclass{article}
+\usepackage[UTF8]{ctex} % 中文latex支持
+\usepackage{graphicx} % 引入图片时需要的包
+\usepackage{float}    % 插入图片的时候支持`H`这个位置选项
+\usepackage{subcaption} % 插入多张图片到一个figure域中
+\usepackage{hyperref}   % 插入超链接、TOC支持链接
+\usepackage{amsmath,bm} % 一些数序符号、字符
+\usepackage{listings}   % 插入代码块
+% ==== 对引入的package配置 ====
+\graphicspath{{images/}} % 配置graphicx这个包：指定图片存储的地方
+\hypersetup{ % 设置超链接和url的显示样式
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+\urlstyle{same}
+
+% ==== Part2: latex文档格式配置 ====
+\newif\ifchinese % 定义一个条件变量: ifchinese, 作为控制条件编译的开关
+\chinesetrue % 条件编译的控制开关，注释掉此部分内容，则对应部分不会被现实
+\newif\ifchinese % 定义一个条件变量: ifchinese, 作为控制条件编译的开关
+\chinesetrue % 条件编译的控制开关，注释掉此部分内容，则对应部分不会被现实
+
+% ==== Part3: latex文档标题部分 ====
+\title{基于RISC-V的嵌入式低功耗MCU设计}
+\author{付杰}
+\date{2023 年 4 月 19日 to \today}
+
+
+% ==== Part4: latex文档正文部分 ====
+\begin{document}
+\maketitle
+\newpage
+
+\begin{abstract} % 摘要
+  RISC-V指令集低功耗嵌入式实时响应MCU，五级流水线设计
+  \par\textbf{关键字：} RISC-V, MCU, 低功耗
+\end{abstract}
+\newpage
+
+\tableofcontents % 插入目录
+\newpage
+
+
+\section{MCU整体特点及实现方案}
+\subsection{流水线}
+\subsubsection{IF}
+\begin{enumerate}
+  \item \textbf{静态分支预测}\cite{riscv1}：
+    \begin{itemize}
+      \item B-Type: FNBT
+      \item JAL: 直接做静态预测，直接跳转
+      \item JALR：只对x0, x1做硬件加速；其余情况下不对JALR做分支预测
+    \end{itemize}
+\end{enumerate}
+\subsubsection{ID}
+\subsubsection{EXE}
+\subsubsection{MEM}
+\subsubsection{WB}
+\subsection{低功耗}
+\begin{enumerate}
+  \item \textbf{逻辑门控}\cite{riscv1}：加法器、移位器等运算资源内 部包含大量逻辑门，若在空闲时放任其翻转将造成大量功耗开销。\\
+   使用逻辑门控的方法，在不使用运算资源时强制其输入为0，从而避免上述问题
+\end{enumerate}
+\subsection{加速器控制}
+
+
+
+
+\newpage
+\bibliography{mcuRef} % 参考文献源，存储所有的参考文献
+\bibliographystyle{IEEEtran} % latex饮用参考文献时的格式
+
+\end{document}
+

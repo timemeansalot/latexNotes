@@ -8,3 +8,5 @@
 *.synctex.gz
 *.synctex.gz\(busy\)
 *.xdv
+*.out
+*.toc
