@@ -404,7 +404,8 @@ PS: 为了节约文章的空间，后续文档中，列向量$\boldsymbol{v}$采
       \item Gauss-Jordan elimination: $\left[A \; I\right]\rightarrow [I \: A^{-1}]$
     \end{enumerate}
 \end{enumerate}
-\section{LU分解}
+\section{矩阵分解}
+\subsection{LU分解}
 \begin{equation}
   \begin{aligned}
     A&=LU\\ 
@@ -424,9 +425,98 @@ PS: 为了节约文章的空间，后续文档中，列向量$\boldsymbol{v}$采
 TODO: 举例子说明A=LU过程
 
 \begin{enumerate}
-  \item $A=LU$的计算复杂度: $O(n^3)$
+  \item $A=LU$的计算复杂度: $O(n^3/3)$
   \item LU分解的作用：更方便地求解x, $Ax=b \rightarrow Lc= b, Ux=c$
 \end{enumerate}
+
+\subsection{$LDL^T$分解}
+如果待做LU分解的矩阵A是\textbf{对称矩阵}，则按照LU分解的方法可以做到$LDL^T$分解\\
+$A=LDU=LDL^T$, $LDL^T$分解的计算复杂度只有$O(n^3/6)$，是LU分解的一半 
+\begin{equation*}
+ \begin{aligned}
+ S&=\left[
+  \begin{array}{c c c}
+    1 & 4 &5\\ 
+    4 & 2 &6\\ 
+    5 & 6 &3 
+  \end{array}
+ \right]\rightarrow
+   \left[
+    \begin{array}{c c c}
+      1 & 4 &5\\ 
+      0 & -14 & -14\\ 
+      0 & -14 & -22
+    \end{array}
+   \right]\rightarrow
+    \left[
+      \begin{array}{c c c}
+      1 & 4 &5\\ 
+      0 & -14 & -14\\ 
+      0 & 0 & -8 
+      \end{array}
+    \right]=U\\ 
+  D&=\left[
+    \begin{array}{c c c }
+      1 & 0 & 0\\ 
+      0 & -14&0\\ 
+      0 & 0 &-8
+    \end{array}
+  \right], 
+  L=\left[
+    \begin{array}{c c c }
+      1 & 0 & 0\\ 
+      4 & 1 & 0\\ 
+      5 & 1 & 1
+    \end{array}
+  \right]
+ \end{aligned} 
+\end{equation*}
+D和L可以直接由U计算得到，简化了LU分解的复杂度
+
+\section{转置(Transpose)}
+\begin{enumerate}
+  \item inner product: $\boldsymbol{x\cdot y}=\boldsymbol{x}^T\boldsymbol{y}$，结果是一个数\\ 
+        outer product: $\boldsymbol{xy^T}$ 是n x n 矩阵
+  \item $(A+B)^T=A^T+B^T$\\ 
+        $(AB)^T=B^TA^T$\\
+        $(A^{-1})^T=(A^T)^{-1}$\\ 
+        A下三角：$A^{-1}$下三角、$A^T$上三角\\
+  \item $(Ax)^Ty=x^TA^Ty$
+  \item $A^TA\neq AA^T$恒为对称矩阵
+\end{enumerate}
+\textbf{Perputation Matrix}: 
+P是矩阵I任意打乱行与行之间的顺序得到的矩阵，一共有n!中P矩阵, 
+$P^{-1}=P^T$\\ 
+P乘以矩阵A，会把A每行的顺序按照P每行的顺序改变，例如:
+\begin{equation*}
+ \begin{aligned}
+  P=\left[
+    \begin{array}{c c c }
+      0 & 1 & 0\\ 
+      0 & 0 & 1\\ 
+      1 & 0 & 0
+    \end{array}
+  \right],  
+  A=\left[
+    \begin{array}{c }
+     row_1\\ 
+     row_2\\ 
+     row_3
+    \end{array}
+  \right]\rightarrow
+  PA=\left[
+    \begin{array}{c }
+     row_2\\ 
+     row_3\\ 
+     row_1
+    \end{array}
+  \right]
+ \end{aligned} 
+\end{equation*}
+在做LU分解的时候，如果矩阵A的pivot不在正确的位置，可以先用矩阵P乘以A，在对PA做LU分解
+\begin{equation*}
+ A=LU \rightarrow PA=L'U'
+\end{equation*}
 
 % \newpage 
 % \bibliography{ref} % 参考文献源，存储所有的参考文献
