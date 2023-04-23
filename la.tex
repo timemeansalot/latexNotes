@@ -235,6 +235,7 @@ PS: 为了节约文章的空间，后续文档中，列向量$\boldsymbol{v}$采
 
 \begin{enumerate}
   \item \textbf{几何理解：}b在A所有列向量张成的空间里
+  \item \textbf{向量理解：}b在A的列空间里面, $b \in C(A)$
 \end{enumerate}
 
 \subsection{矩阵乘法有唯一解条件}
@@ -516,6 +517,19 @@ P乘以矩阵A，会把A每行的顺序按照P每行的顺序改变，例如:
 \begin{equation*}
  A=LU \rightarrow PA=L'U'
 \end{equation*}
+
+\chapter{向量空间}%
+定义$R^n$包含\underline{所有含n个元素的列向量}，$R^n$是一个\textit{向量空间}，其包含所有满足要求的列向量。\\ 
+例如$R^2$包含所有含两个元素的向量(x,y)，因此$R^2$可以理解成\textbf{二维平面}。
+\textbf{对向量空间做线性操作，得到的结果必须属于该向量空间}
+
+\textit{子空间(subspace)}：在\textit{vecter space}的基础上，加上一些限制，就可以得到它的subspace。例如：$R^3$可以表示三维向量
+空间，则“过原点的平面”就是$R^3$的subspace。
+而且其中的每个元素都属于$R^3$而不是$R^2$。
+
+\textit{列空间(Column Space)}: 矩阵A所有列向量的线性组合就是矩阵A的列空间，计作$Ax=\boldsymbol{C}(A)$\\ 
+$Ax=b$有解的条件就是$b\in C(A)$，此时可以计算得到x，表示合适的A的列向量的线性组合。
+  
 
 % \newpage 
 % \bibliography{ref} % 参考文献源，存储所有的参考文献
