@@ -136,8 +136,9 @@
 
 \subsection{加速器控制}
 \subsection{MCU测试}
+\subsubsection{SoC系统测试}
 \begin{enumerate}
-  \item RISC-V有自己的工具链和测试程序，可以通过Github下载\cite{riscv1}
+  \item RISC-V有自己的工具链和测试程序，可以通过Github下载\cite{riscv3}
   \item 高级语言编译成MCU上可以运行的程序，还需要提供板级支持包BSP(Board Support Package)\cite{riscv1}，BSP提供如下支持：
     \begin{enumerate}
       \item MCU 硬件设备的地址分配信息
@@ -148,6 +149,35 @@
       \item 高级语言运行库
     \end{enumerate}
 \end{enumerate}
+\subsubsection{处理器核测试}
+简单的对\textbf{处理器核功能测试}可以通过Golden Model比较的方法测试\\ 
+给软件模拟器，如\textbf{Spike}加载更处理器核同样的指令序列，然后比较每个周期的
+处理器核的寄存器和内存的数据以及模拟器的寄存器和处理器核的信息\cite{riscv4}。 
+如果二者的数据恒一致，则可以认为处理器核的功能是正确的
+
+\section{Chisel}
+\textbf{Chisel}将设计空间的抽象水平从\textbf{寄存器传输级} 的硬件层面提高到高层次的、\textbf{面向对象}的软件层面
+\textbf{相对于Verilog的优点}: 支持高度参数化的电路生成器\cite{riscv2}
+\begin{itemize}
+  \item 代码更加高效：Chisel 的编译器框架可以实现电路的自动专业化和转换。 这意味着转变为 FPGA 优化版本的电路比未优化的版本运行得更快
+  \item 自定义接口类型：Chisel 允许将基本的数据类型聚集成捆，以创建新的数据类型或方便捆绑信 号的使用
+  \item 参数化：Chisel 允许参数化的函数、Chisel 也允许参数化的类
+\end{itemize}
+Chisel生成Verilog的三步流程：
+\begin{enumerate}
+  \item Chisel前端将Chisel代码生成FIR(Flexible Intermediate Representation)
+  \item \textbf{优化}：为生成 RTL 提取优化 FIR 并读入自定义参数，得到FIRRTL
+  \item 生成Verilog：后端根据优化的 FIRRTL 生成 Verilog
+\end{enumerate}
+
+Chisel \textbf{前后端示意图如下}:\cite{riscv3}
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=\textwidth]{chisel}
+\end{center}
+\caption{基于 Chisel 源码的项目前后端流程示意图}
+\label{fig: chisel}
+\end{figure}
 
 
 
