@@ -236,6 +236,15 @@ PS: 为了节约文章的空间，后续文档中，列向量$\boldsymbol{v}$采
 \begin{enumerate}
   \item \textbf{几何理解：}b在A所有列向量张成的空间里
   \item \textbf{向量理解：}b在A的列空间里面, $b \in C(A)$
+  \item $Ax=b$左边等于0的行，对应右边也是0, 否则会出现$0=b$的矛盾情况
+  \item $Ax=b$解和秩的关系: 
+    \begin{itemize}
+      \item $r=m=n \rightarrow A$可逆，有唯一解
+      \item $r=m<n \rightarrow$矩阵A比较宽, 无穷多解
+      \item $r<m, r=n \rightarrow$ 矩阵A比较窄，最多有1个解（矩阵$\left[A \vdots b\right]$多余的行为0)
+      \item $r<m ,r<n \rightarrow$ 有0个或者无穷多个解
+    \end{itemize}
+    总结：$r<n \leftrightarrow $可能是无穷多的解; $r<m\leftrightarrow$可能无解
 \end{enumerate}
 
 \subsection{矩阵乘法有唯一解条件}
@@ -526,11 +535,96 @@ P乘以矩阵A，会把A每行的顺序按照P每行的顺序改变，例如:
 \textit{子空间(subspace)}：在\textit{vecter space}的基础上，加上一些限制，就可以得到它的subspace。例如：$R^3$可以表示三维向量
 空间，则“过原点的平面”就是$R^3$的subspace。
 而且其中的每个元素都属于$R^3$而不是$R^2$。
+\section{列空间(Column Space)}
+\textit{列空间(Column Space)}: 矩阵A所有列向量的线性组合就是矩阵A的列空间，计作$Ax=\boldsymbol{C}(A)$
+\begin{enumerate}
+  \item $C(A) \in R^m$
+  \item $Ax=b$有解的条件就是$b\in C(A)$，此时可以计算得到x，表示合适的A的列向量的线性组合。
+\end{enumerate}
 
-\textit{列空间(Column Space)}: 矩阵A所有列向量的线性组合就是矩阵A的列空间，计作$Ax=\boldsymbol{C}(A)$\\ 
-$Ax=b$有解的条件就是$b\in C(A)$，此时可以计算得到x，表示合适的A的列向量的线性组合。
-  
+\section{零空间(Null Space)}
+\textit{零空间(Null Space)}: 零空间是针对于x而不是针对于A的，
+其定义是所有满足$Ax=0$的可能的$\boldsymbol{x}$ 
+\begin{enumerate}
+  \item $\boldsymbol{x} \in R^n$
+  \item $\boldsymbol{x}=0$肯定是可能的解
+  \item 当矩阵A可逆的时候，$x=0$是唯一解；否则解还可能是其他的x
+  \item 将矩阵A进行行化简，在行最简形式下(row elimination echalon form $\boldsymbol{R}$), 可以得到pivot和free variable,
+    free variable的数量，就是N(A)的纬度\\ 
+    eg: free variable=4, 则有4个特解，N(A)就是这4个特解的线性组合, N(A)的纬度等于4
+  \item povit的数量就是矩阵A的秩, $rank(A)=r(A)=\text{number of povits}.$\\ 
+    真正表示A的大小的因素是A的纬度，而不是A的行数（因为A的行如果是别的行的线性组合，则该行会被行变换消除掉）
+  \item $r(A)=$独立的行、独立的列; n-r等于$N(A)$的纬度，因为r等于pivot的数量、n-r等于自由变量的数量
+  \item pivot会存在于哪些列中呢？povit只会存在于A的独立的列向量中, 因此我们在找povit的时候，可以先排除哪些“明显依赖于其他列的列向量”。
+\end{enumerate}
+\begin{equation*}
+  \begin{aligned}
+    A&=\left[
+      \begin{array}{c c }
+        1 & 2\\ 
+        3 & 6
+      \end{array}
+    \right], 
+    Ax=0\\ 
+    x_1&+2x_2=0,
+    s=\left[
+      \begin{array}{c }
+        -2\\ 
+        1
+      \end{array}
+    \right]\rightarrow 
+  N(A)=ks=k\cdot 
+    \left[
+      \begin{array}{c }
+        -2\\ 
+        1
+      \end{array}
+    \right]
+  \end{aligned} 
+  \label{eq: nullSpace}
+\end{equation*}
+  上面的等式中，N(A)是向量s的线性组合, s称为$Ax=0$的特解。
 
+\section{解Ax=b} % (fold)
+求解分为两部：“找通解”、“找特解”
+
+\begin{enumerate}
+  \item \textbf{找通解}: $Ax=0\leftarrow$ 将A行化简为R，找到自由的列向量，由自由变量反解得到pivot变量的值，得到自由向量，得到通解$x_n$
+  \item \textbf{找特解}: $Ax=b\leftarrow$ 将A行化简为R，b经过同样的行化简得到d，令所有的自由变量为0，计算得到povit变量的值，得到特解$x_p$
+\end{enumerate}
+$x=x_p+x_n$\\
+eg: \\ 
+\begin{equation*}
+  \begin{aligned}
+    A&=\left[
+      \begin{array}{c c c c }
+        1 & 3 & 0 & 2\\ 
+        0 & 0 & 1 & 4\\ 
+        1 & 3 & 1 & 6
+      \end{array}
+    \right], 
+  b=\left[
+    \begin{array}{c }
+     1\\6\\7
+    \end{array}
+  \right]\\ 
+[A\vdots b]&\rightarrow[R\vdots d]=\left[
+  \begin{array}{c c c c c }
+    1 & 3 & 0 & 2 &1\\ 
+    0 & 0 & 1 & 4 &6\\ 
+    0 & 0 & 0 & 0 &0
+  \end{array}
+\right]
+  \end{aligned} 
+\end{equation*}
+\begin{enumerate}
+  \item 通解：$x_1, x_3$是pivot, $x_2, x_4$是free variable, 分别令$(x_2, x_4)=(0, 1), (1, 0)$，可以得到$(x_1, x_2, x_3, x_4)=(-2, 0, -4, 1), (-3, 1, 0, 0)$\\ 
+    则通解为$x_n=c_1(-2, 0, -4, 1)+c_2(-3, 1,0, 0)$
+  \item 特解：直接由$x_1, x_3$是pivot再加上d列向量对应元素是1, 6,可以得到特解为$x_p=(1, 0, 6, 0)$
+\end{enumerate}
+因此$Ax=b$的解为$x=x_p+x_n=(1, 0, 6, 0)+c_1(-2, 0, -4, 1)+c_2(-3, 1,0, 0)$
+
+% section section name (end)
 % \newpage 
 % \bibliography{ref} % 参考文献源，存储所有的参考文献
 % \bibliographystyle{IEEEtran} % latex饮用参考文献时的格式
