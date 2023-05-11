@@ -134,19 +134,51 @@
 \label{fig: SoC1}
 \end{figure}
 
-\subsection{加速器控制}
-\subsection{MCU测试}
-\subsubsection{SoC系统测试}
+\section{MCU测试}
+\subsection{处理器核软件仿真}
+RISC-V 官方提供了由汇编编写的测试程序集。测试程序集包括两类，
+一类是\textbf{功能测试集}，一类是\textbf{符合性测试集}\cite{riscv6}。
 \begin{enumerate}
-  \item RISC-V有自己的工具链和测试程序，可以通过Github下载\cite{riscv3}
-  \item 高级语言编译成MCU上可以运行的程序，还需要提供板级支持包BSP(Board Support Package)\cite{riscv1}，BSP提供如下支持：
+    \item 功能性测试：例如判断\textit{add}指令是否正确：运行add指令之后，将结果存入寄存器；
+        另一个寄存器内存有add指令的答案，然后使用bne指令比较两个寄存器的值；
+        如果相同则顺序运行后续的测试、否则跳转到出错程序的地址
+    \item 符合性测试：运行一段指令，然后将D-Memory中的数据拷贝出来；
+        与从模拟器中的D-Memory中的结果比较，
+        如果二者100\%匹配，则测试通过。
+\end{enumerate}
+\subsection{处理器核FPGA验证}
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[width=\textwidth]{fpga}
+    \end{center}
+    \caption{FPGA 实现系统框图}
+    \label{fig: fpga}
+\end{figure}
+处理器核需要通过总线连接到uart模块，再通过uart模块输出打印的数据。
+使用 Vivado 编译设计并生成\textbf{比特流文件}，之后将比特流文件下载到 FPGA 开发板后，
+将开发板的 UART 端口与电脑相连，
+并在电脑端的串口调试工具中设置好对应的波特率后即可观察到 FPGA 开发板的输出
+\subsection{处理器通用性能分析}
+对处理器的通用性能分析采用在
+嵌入式处理器、微控制器中常用的性能测试软件 Dhrystone 和 Coremark 进行测试。
+
+Dhrystone 的测试标准就是看处理器能够在单位时间内运行多少次程序，其指标单位为 DMIPS/MHz。
+
+CoreMark 是由嵌入式微处理器基准评测协会所推出的一项基准测试程序，
+用于测试处理器的核心性能。CoreMark 使用 C语言编写，单位是CoreMark/MHz，
+有数学矩阵操作、列举、状态机和循环冗余校验四类运算，比较符合真实环境中的使用情况。
+
+\subsection{SoC系统测试}
+\begin{enumerate}
+    \item RISC-V有自己的工具链和测试程序，可以通过Github下载\cite{riscv3}
+    \item 高级语言编译成MCU上可以运行的程序，还需要提供板级支持包BSP(Board Support Package)\cite{riscv1}，BSP提供如下支持：
     \begin{enumerate}
-      \item MCU 硬件设备的地址分配信息
-      \item 硬件设备的驱动函数
-      \item 系统引导程序
-      \item 中断、异常服务程序
-      \item 系统链接脚本
-      \item 高级语言运行库
+        \item MCU 硬件设备的地址分配信息
+        \item 硬件设备的驱动函数
+        \item 系统引导程序
+        \item 中断、异常服务程序
+        \item 系统链接脚本
+        \item 高级语言运行库
     \end{enumerate}
 \end{enumerate}
 \subsubsection{处理器核测试}
@@ -159,27 +191,49 @@
 \textbf{Chisel}将设计空间的抽象水平从\textbf{寄存器传输级} 的硬件层面提高到高层次的、\textbf{面向对象}的软件层面
 \textbf{相对于Verilog的优点}: 支持高度参数化的电路生成器\cite{riscv2}
 \begin{itemize}
-  \item 代码更加高效：Chisel 的编译器框架可以实现电路的自动专业化和转换。 这意味着转变为 FPGA 优化版本的电路比未优化的版本运行得更快
-  \item 自定义接口类型：Chisel 允许将基本的数据类型聚集成捆，以创建新的数据类型或方便捆绑信 号的使用
-  \item 参数化：Chisel 允许参数化的函数、Chisel 也允许参数化的类
+    \item 代码更加高效：Chisel 的编译器框架可以实现电路的自动专业化和转换。 这意味着转变为 FPGA 优化版本的电路比未优化的版本运行得更快
+    \item 自定义接口类型：Chisel 允许将基本的数据类型聚集成捆，以创建新的数据类型或方便捆绑信 号的使用
+    \item 参数化：Chisel 允许参数化的函数、Chisel 也允许参数化的类
 \end{itemize}
 Chisel生成Verilog的三步流程：
 \begin{enumerate}
-  \item Chisel前端将Chisel代码生成FIR(Flexible Intermediate Representation)
-  \item \textbf{优化}：为生成 RTL 提取优化 FIR 并读入自定义参数，得到FIRRTL
-  \item 生成Verilog：后端根据优化的 FIRRTL 生成 Verilog
+    \item Chisel前端将Chisel代码生成FIR(Flexible Intermediate Representation)
+    \item \textbf{优化}：为生成 RTL 提取优化 FIR 并读入自定义参数，得到FIRRTL
+    \item 生成Verilog：后端根据优化的 FIRRTL 生成 Verilog
 \end{enumerate}
 
 Chisel \textbf{前后端示意图如下}:\cite{riscv3}
 \begin{figure}[H]
-\begin{center}
-  \includegraphics[width=\textwidth]{chisel}
-\end{center}
-\caption{基于 Chisel 源码的项目前后端流程示意图}
-\label{fig: chisel}
+    \begin{center}
+        \includegraphics[width=\textwidth]{chisel}
+    \end{center}
+    \caption{基于 Chisel 源码的项目前后端流程示意图}
+    \label{fig: chisel}
 \end{figure}
 
 
+\section{Co-Processor}
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[width=\textwidth]{acc}
+    \end{center}
+    \caption{加速器与协处理器数据流对比}
+    \label{fig: acc}
+\end{figure}
+\begin{itemize}
+    \item 加速器访存过程：处理器核首先通过Load指令从存储器中加载数据到寄存器中；
+      处理器核再通过Store指令将寄存器中的值写入到加速器的缓存中。
+    \item 协处理器访存过程：处理器核通过Load指令从存储器中读取数据
+        处理器核通过EAI接口将数据写入到协处理器的缓存中
+\end{itemize}
+相比之下，协处理器在数据加载过程中，不需要主处理器的通用寄存器参与，减少了数据的搬移。
+因此可以进一步提高算法的运行速度、节约功耗\cite{riscv5}。
+缺点在于：
+\begin{itemize}
+    \item 需要支持额外的\textbf{扩展指令}
+    \item 需要修改编译工具来支持扩展指令，
+        具体指修改GCC工具链中的\textbf{Binutils}工具集\cite{riscv5}。
+\end{itemize}
 
 
 \newpage
